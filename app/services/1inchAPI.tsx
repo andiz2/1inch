@@ -32,11 +32,8 @@ export async function fetchChains(): Promise<Chain[]> {
     return data.result;
 }
 
-export async function fetchTokens(chainId: number): Promise<Token[]> {
-    const res = await fetch(`/api/tokens?chainId=${chainId}`);
-    if (!res.ok) {
-        throw new Error('Failed to fetch tokens');
-    }
-    const data = await res.json();
-    return Object.values(data.tokens);
-}
+export const fetchTokens = async (chainId: number, query: string) => {
+    const res = await fetch(`/api/tokens?chainId=${chainId}&q=${encodeURIComponent(query)}`);
+    if (!res.ok) throw new Error('Failed to fetch tokens');
+    return res.json();
+};

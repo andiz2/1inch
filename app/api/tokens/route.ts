@@ -3,6 +3,7 @@ import { NextRequest } from 'next/server';
 export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const chainId = searchParams.get('chainId');
+    const query = searchParams.get('q'); // search term
 
     if (!chainId) {
         return new Response(JSON.stringify({ error: 'Missing chainId parameter' }), {
@@ -11,8 +12,15 @@ export async function GET(request: NextRequest) {
         });
     }
 
+    if (!query) {
+        return new Response(JSON.stringify({ error: 'Missing search query parameter "q"' }), {
+            status: 400,
+            headers: { 'Content-Type': 'application/json' },
+        });
+    }
+
     try {
-        const response = await fetch(`https://api.1inch.dev/v5.0/${chainId}/tokens`, {
+        const response = await fetch(`https://api.1inch.dev/token/v1.2/${chainId}/search?q=${encodeURIComponent(query)}`, {
             headers: {
                 Authorization: `Bearer ${process.env.REACT_APP_INCH_API_KEY}`,
             },
