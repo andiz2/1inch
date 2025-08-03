@@ -13,6 +13,14 @@ export interface Chain {
     };
 }
 
+export interface Token {
+    symbol: string;
+    name: string;
+    address: string;
+    decimals: number;
+    logoURI?: string;
+}
+
 export async function fetchChains(): Promise<Chain[]> {
     const res = await fetch('/api/notify'); // <-- call your Next.js API route here
     if (!res.ok) {
@@ -22,4 +30,13 @@ export async function fetchChains(): Promise<Chain[]> {
 
     // ✅ Extract the array before returning
     return data.result;
+}
+
+export async function fetchTokens(chainId: number): Promise<Token[]> {
+    const res = await fetch(`/api/tokens?chainId=${chainId}`);
+    if (!res.ok) {
+        throw new Error('Failed to fetch tokens');
+    }
+    const data = await res.json();
+    return Object.values(data.tokens);
 }
